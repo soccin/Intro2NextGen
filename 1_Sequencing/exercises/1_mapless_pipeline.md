@@ -12,7 +12,7 @@ In this experiment a library of hairpins is introduced into a population of cell
 
 A typical shRNA construct will look as follows;
 
-![alt text](../images/shRNAconstruct.pdf "shRNAconstruct")
+![alt text](../images/shRNAconstruct.png "shRNAconstruct")
 
 For this excercise we will focus on a core region that contains
 
