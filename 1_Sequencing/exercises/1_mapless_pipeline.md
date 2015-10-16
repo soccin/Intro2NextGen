@@ -214,7 +214,7 @@ CCCTAGTGAATATTTATTATGAAACATCTGTGGCTTCACTACCAG
 ACCATAGCATATATCAATGTAATACATCTGTGGCTTCACTACCAGATCG
 ```
 
-N.B. the second sequence was trimmed. 
+*N.B.* the second sequence was trimmed. 
 
 What do the options means? You should look at the help screen and convince yourself they are what we want. But why `-v`; what is verbose? It just prints some statistics how many sequences were discard because they were two short after trimming. That info goes to standard error if your are worried about it messing up the pipeline. If you want to see it do:
 ```
@@ -280,11 +280,77 @@ TCATTTCCATTTTACAAGATAA
 
 ## Collapse and re-format
 
+The steps up to this point are actually fairly common in many sequence processing pipeline (except for the conversion from FASTQ to FASTA) and at this point we have trimmed/clipped sequences which in most situation we would now mapped to the appropriate genome. However in this case mapping is unnecessary. The sequences are from a designed screen so we know what they are (and what genes they target) already based on just the sequence. What we want to know is from the starting pool for roughly equally proportioned hairpins which ones were enriched and which were depleted. Simply we want to count them and there is a tool to do that: `fastx_collapser`. Although not obvious from its name `fastx_collapser` will collapse multiple copies of the same sequence and will also give you the counts of how many times  that copied was in the file. 
+
+Add this step the pipeline with:
+```
+	zcat $INPUT | fastq_quality_trimmer -t 30 -l 28 -Q33 -v \
+	| fastq_to_fasta -Q33 -v \
+	| fastx_clipper -a TACATC -c -l 22 \
+	| fastx_collapser \
+	| head
+```
+
+and you should see:
+```
+>1-1222
+CCTAGTGAATATTTATTATGAA
+>2-1011
+CACTAAGTAAATGTTTAATCAA
+>3-976
+GAAGGATAAATTAGTAACTTAA
+>4-911
+TACATACATAAATCATTCTTTA
+>5-812
+TCTAATAGAAAATAGAACTCTA
+```
+
+Were the numbers in the FASTA description line indicate the rank of the sequences counts and the raw count itself; i.e., there were 1,222 copies of the first sequence. 
+
+Technically we are now done, we have the counts, but that is not the more useable of formats. In almost all pipelines the minimal, raw output is often not the most workable so there will often be a number of post-processing steps. One last one using the FASTX tools kit is to convert the FASTA file to a table. 
+```
+	zcat $INPUT | fastq_quality_trimmer -t 30 -l 28 -Q33 -v \
+	| fastq_to_fasta -Q33 -v \
+	| fastx_clipper -a TACATC -c -l 22 \
+	| fastx_collapser \
+	| fasta_formatter -t \
+	> countsTable.txt
+```
+
+This is the end of this stage of the pipeline so we write the file to save it for later use. To see what is in there use the head command: `head countsTable.txt`
+```
+1-1222	CCTAGTGAATATTTATTATGAA
+2-1011	CACTAAGTAAATGTTTAATCAA
+3-976	GAAGGATAAATTAGTAACTTAA
+4-911	TACATACATAAATCATTCTTTA
+5-812	TCTAATAGAAAATAGAACTCTA
+6-809	TACTACTTATACAACAACTTAA
+7-727	TTGCATATTCATTGATAAATAA
+8-671	CTACAGTGTACTTACATACATA
+9-637	GAGAATGTATTCTTAGAATACA
+10-633	TTAAGTGTTATTTGTTATTAAA
+```
+
+Not the most greatest format but a least is a much more easily parseable table.
+
 ## Final Steps
 
-awk one liner
+While the sequences identify the shRNA uniquely a much nicer table for humans would look like this:
+```
+1222	CCTAGTGAATATTTATTATGAA	Rpa1_17
+1011	CACTAAGTAAATGTTTAATCAA	Mplkip_2466
+976		GAAGGATAAATTAGTAACTTAA	Fancg_37
+911		TACATACATAAATCATTCTTTA	Rnaseh2a_928
+```
 
-some people love it some hate it; some thing awk is pure evil itself. You mileage may vary.
+Where the identity of the sequences is stored in the file `shRNA_Library.fasta` which is in the same directory as the input FASTQ file. 
+
+There is no way to do this with the FASTX toolkit. It could be done with a crazy awk or perl one liner. But at this point it is best to write a real program. And since it is likely we are going to be some some sort of statistical analysis on this data it might be best to do this last step in `R` but if you do not like working with strings in `R` you could write a short python or perl (or whatever) script that takes the table from the pipeline and the library file and output this file 
+
+However to tie things together and to complete this get the table and gene names into R and make a pie chart of the top 10 shRNA's. 
+
+![](../images/exercise1.png "top10 Pie")
+
 
 ## Extra credit
 
@@ -297,18 +363,6 @@ You can use the following dataset which is miRNA sequenced to 50bp so every sequ
 * or if you just want to practice more with FASTX use it to clip
 
 *GET MIRNA DATASET*
-
-## Code
-
-```bash
-zcat shRNA_Experiment1.fastq.gz \
-	| $FASTX/fastq_quality_trimmer -t 30 -l 28 -Q33 -v \
-	| $FASTX/fastq_to_fasta -Q33 -v \
-	| $FASTX/fastx_clipper -a TACATC -c -l 22 \
-	| $FASTX/fastx_collapser -v \
-	| $FASTX/fasta_formatter -t \
-	> exercise_1_1.out
-```
 
 ## References
 
