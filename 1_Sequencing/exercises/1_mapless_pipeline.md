@@ -70,22 +70,87 @@ However, for people already comfortable with the command line and programming I 
 ```
 	which fastq_to_fasta
 ```
+
 if you see nothing then it is not on your path and you will need to find it and add it to your path. 
 
 Then browse the commands available and there features by either `ls`-ing that directory and running the commands with the `-h` option: 
 ```
 	fastq_to_fasta -h
 ```
+
 or use the manual pages linked above and try to build the pipeline. Although you can get something built in less than steps you should use **5** different commands from the toolkit. 
 
 If you run into a snag then just move to the next section. If you do complete the pipeine skip to __Final Steps__.
 
 ## Pipeline walkthrough
 
-Although it is usally a really bad idea to do pipelines as command lines one liners for pedagoical reasons we will do that here. The input file is small enough that repated re-running should not be an issue. However if you feel more comfortable encapsulating the commands in a script then please do so.
+### Preamble
+
+Although it is usually a really bad idea to do pipelines as command line one liners for pedagoical reasons we will do that here. The input file is small enough that repated re-running should not be an issue. However if you feel more comfortable encapsulating the commands in a script then please do so. But make sure if you are going to go the one liner route you understand how to use the command history; in particular how to repeat previous commands. Make sure either CTRL-P or uparrow work as expected.
 
 First make sure the FASTX toolkit is on your path. You can do this typing:
+```
+	fastq_to_fasta -h
+```
 
+you should see something like
+```
+
+usage: fastq_to_fasta [-h] [-r] [-n] [-v] [-z] [-i INFILE] [-o OUTFILE]
+Part of FASTX Toolkit 0.0.13.2 by A. Gordon (gordon@cshl.edu)
+
+   [-h]         = This helpful help screen.
+   [-r]         = Rename sequence identifiers to numbers.
+   [-n]         = keep sequences with unknown (N) nucleotides.
+                  Default is to discard such sequences.
+```
+
+... (your version number may be different)
+
+If not or you get an error ask for help. Now check that you can re-run this command using one of the history re-run command methods: 
+
+* Up-arrow
+
+* CTRL-p
+
+In fact re-run that command and then reselect it and edit it to run:
+```
+	fastx_renamer -h
+```
+
+if you new to unix and are having trouble with this ask for help. 
+
+### Intermediates: pipes or files
+
+The walk through is going to be using UNIX pipes to chain together the various commands. If this is too complex or confusing or you want to capture the intermediates you can use I/O redirection
+```
+COMMAND <INPUT >OUTPUT
+```
+	
+or if you look at the help screen you will see that most the FASTX commands allow you to specific the input and output file with:
+```
+   [-i INFILE]  = FASTA/Q input file. default is STDIN.
+   [-o OUTFILE] = FASTA/Q output file. default is STDOUT.
+```
+
+ie, they default to standard input and standard output but you can explicitly set the input and output files or just one or the other. 
+
+### Step 1: find input, create a work space
+
+First step is to find the input file: `shRNA_Experiment1.fastq.gz`. If the course files were installed in your home directory then it should be here:
+```
+	$HOME/Intro2NextGen/1_Sequencing/data/shRNA_Experiment1.fastq.gz
+```
+
+verify that is is there by doing the following:
+```
+file $HOME/Intro2NextGen/1_Sequencing/data/shRNA_Experiment1.fastq.gz	
+```
+
+and you should see something like
+```
+.../Intro2NextGen/1_Sequencing/data/shRNA_Experiment1.fastq.gz: gzip compressed data, from Unix, last modified: Thu Oct 15 18:09:05 2015, max compression
+```
 
 
 ## Code
