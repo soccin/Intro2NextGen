@@ -298,11 +298,6 @@ You can use the following dataset which is miRNA sequenced to 50bp so every sequ
 
 *GET MIRNA DATASET*
 
->>>>>>> External Changes
-
-You can use the following dataset which is miRNA sequenced to 50bp so every sequence has the adapter in it. 
->>>>>>> External Changes
-
 ## Code
 
 ```bash
