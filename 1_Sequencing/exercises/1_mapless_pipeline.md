@@ -144,7 +144,7 @@ First step is to find the input file: `shRNA_Experiment1.fastq.gz`. If the cours
 
 verify that is is there by doing the following:
 ```
-file $HOME/Intro2NextGen/1_Sequencing/data/shRNA_Experiment1.fastq.gz	
+	file $HOME/Intro2NextGen/1_Sequencing/data/shRNA_Experiment1.fastq.gz	
 ```
 
 and you should see something like
@@ -152,6 +152,156 @@ and you should see something like
 .../Intro2NextGen/1_Sequencing/data/shRNA_Experiment1.fastq.gz: gzip compressed data, from Unix, last modified: Thu Oct 15 18:09:05 2015, max compression
 ```
 
+if you get an error (No such file or directory) ask; there should be a live update as to where these files are. If you are feeling adventurous you can look for it with
+```
+	find $HOME | fgrep shRNA_Experiment1.fastq.gz
+```
+
+Once you are sure you have the file code the first step of the pipeline. Note; that files ends with a `.gz` extension. That means the file is compressed (to save space). DNA sequence data is highly redudant and actually compresses quite well and even compressed the files are usually huge so almost always you will be dealing with compressed files. 
+
+You could uncompress it but for this exercise since we will be using pipes extensively let's just take a look at the top of the file with
+```
+	zcat $HOME/Intro2NextGen/1_Sequencing/data/shRNA_Experiment1.fastq.gz | head
+```
+
+`zcat` is like `cat` but decompress first (most systems also have `zmore`) and `head` just gives the first 10 or so lines. You should see:
+```
+@COMPGEN:Set1:201510:4:1105:16154:58520 1:N:0:
+TCCAATCTTTTCAGAGTCTGAATACATCTGTGGCTTCACTACCAGATCGT
++
+BBBFFFFFHHHHHJIJDGHJJIJIJJGIHBEFHFHIIGIEHGIICGFGHD
+@COMPGEN:Set1:201510:4:1105:16052:58552 1:Y:0:
+CCCTAGTGAATATTTATTATGAAACATCTGTGGCTTCACTACCAGAACGC
++
+==>;AA+2AA@=><=@7,?>>=,@3?+<<+@++2AB;@@@A7A>B#####
+@COMPGEN:Set1:201510:4:1105:16106:58578 1:Y:0:
+ACCATAGCATATATCAATGTAATACATCTGTGGCTTCACTACCAGATCGT
+```
+
+### Step 2: Quality Trim
+
+Note strictly necessary but it is often a good idea to quality trim the data. Trimming means remove bases from the sequence that have a Q value below a given threshold, starting from the 3' end and moving to the 5' end. Once you hit a pass that passes the threshold you stop and even if there are low Q bases to the 5' end of this one the trimming ends here. So the first step is to use the trimmer. You are going to use the following command
+```
+	fastq_quality_trimmer -h
+```
+
+Take a look at the options and see if you can guess what you will need. We want to trim to baseQ 30 and discard sequences that are shorter then 28 because those will not longer have intact INDEX sequences (see figure above). Try to work out the options but here is the command you want:
+```
+	zcat $HOME/Intro2NextGen/1_Sequencing/data/shRNA_Experiment1.fastq.gz | fastq_quality_trimmer -t 30 -l 28 -Q33 -v | head
+```
+
+That command is so long it is not readable so here are two very, *very*, useful UNIX features. One variables. You can set the name of that file as a variable and use that instead:
+```
+	INPUT=$HOME/Intro2NextGen/1_Sequencing/data/shRNA_Experiment1.fastq.gz
+```
+
+Now you can say:
+```
+	zcat $INPUT | fastq_quality_trimmer -t 30 -l 28 -Q33 -v | head
+```
+
+and you should see:
+```
+@COMPGEN:Set1:201510:4:1105:16154:58520 1:N:0:
+TCCAATCTTTTCAGAGTCTGAATACATCTGTGGCTTCACTACCAGATCGT
++
+BBBFFFFFHHHHHJIJDGHJJIJIJJGIHBEFHFHIIGIEHGIICGFGHD
+@COMPGEN:Set1:201510:4:1105:16052:58552 1:Y:0:
+CCCTAGTGAATATTTATTATGAAACATCTGTGGCTTCACTACCAG
++
+==>;AA+2AA@=><=@7,?>>=,@3?+<<+@++2AB;@@@A7A>B
+@COMPGEN:Set1:201510:4:1105:16106:58578 1:Y:0:
+ACCATAGCATATATCAATGTAATACATCTGTGGCTTCACTACCAGATCG
+```
+
+N.B. the second sequence was trimmed. 
+
+What do the options means? You should look at the help screen and convinence yourself they are what we want. But why `-v`; what is verbose? It just prints some statistics how many sequences were discard becasue they were two short after trimming. That info goes to stardard error if your are worried about it messing up the pipeline. If you want to see it do:
+```
+	zcat $INPUT | fastq_quality_trimmer -t 30 -l 28 -Q33 -v >/dev/null
+```
+
+and you should see:
+```
+Minimum Quality Threshold: 30
+Minimum Length: 28
+Input: 100000 reads.
+Output: 99078 reads.
+discarded 922 (0%) too-short reads.
+```
+
+But what is that `-Q33` thing. You are not missing it; it is not in the help description. Leave it off and see what happens:
+```
+fastq_quality_trimmer: Invalid quality score value
+(char '+' ord 43 quality value -21) on line 8
+```
+
+A little special easter egg from the FASTX people. FASTX is fairly old toolkit written in the days when Illumina decided to use their own conventions for encoding quality scores in this case PHRED+64. FASTX defaults to that. However, Illumina finally moved to the standard convention that everyone uses now and all current data is encoded in the PHRED+33 scale. So `-Q33` tells the program that. 
+
+If you still confused about this issue check out the wiki page: https://en.wikipedia.org/wiki/FASTQ_format
+
+
+### Convert to FASTA and clip adapter
+
+We are done with the qualities so we can convert from to FASTA format now and then trim out the adapter. The two programs to do this are
+```
+	fastq_to_fasta
+	fastx_clipper
+```
+
+And here is the pipeline up to this point:
+```
+	zcat $INPUT | fastq_quality_trimmer -t 30 -l 28 -Q33 -v | fastq_to_fasta -Q33 -v | fastx_clipper -a TACATC -c -l 22 | head
+```
+
+Again the line is unreadable long so we use another unix convention:
+```
+	zcat $INPUT | fastq_quality_trimmer -t 30 -l 28 -Q33 -v \
+	| fastq_to_fasta -Q33 -v \
+	| fastx_clipper -a TACATC -c -l 22 \
+	| head
+```
+
+If you end a line with a backslash (`\`) and __immediately__ type return then you do not execute the command but rather the shell starts a new line and lets you continue typing. You __must__ not have a space after the backslash.
+
+If everything worked you should see:
+```
+>COMPGEN:Set1:201510:4:1105:16154:58520 1:N:0:
+TCCAATCTTTTCAGAGTCTGAA
+>COMPGEN:Set1:201510:4:1105:16052:58552 1:Y:0:
+CCCTAGTGAATATTTATTATGA
+>COMPGEN:Set1:201510:4:1105:16106:58578 1:Y:0:
+ACCATAGCATATATCAATGTAA
+>COMPGEN:Set1:201510:4:1105:16098:58591 1:N:0:
+CACTAAGTAAATGTTTAATCAA
+>COMPGEN:Set1:201510:4:1105:16162:58613 1:N:0:
+TCATTTCCATTTTACAAGATAA
+```
+
+## Collapse and re-format
+
+## Final Steps
+
+awk one liner
+
+some people love it some hate it; some thing awk is pure evil itself. You mileage may vary.
+
+## Extra credit
+
+* find and install an alternative adapter clipper
+
+* write your own adapter clipper
+
+You can use the following dataset which is miRNA sequenced to 50bp so every sequence has the adapter in it. 
+
+* or if you just want to practice more with FASTX use it to clip
+
+*GET MIRNA DATASET*
+
+>>>>>>> External Changes
+
+You can use the following dataset which is miRNA sequenced to 50bp so every sequence has the adapter in it. 
+>>>>>>> External Changes
 
 ## Code
 
