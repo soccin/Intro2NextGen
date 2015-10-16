@@ -2,9 +2,9 @@
 
 ## Intro
 
-While most next generation sequencing analysis pipelines require the data to be mapped to the target genome there are some pipelines that can be done without any alignment step. One such problem is the analysis of pooled shRNA experiments such as in *Zuber, et. al, 2011*[^Zuber2011]
+While most next generation sequencing analysis pipelines require the data to be mapped to a target genome there are some pipelines that can be done without any alignment step. One such problem is the analysis of pooled shRNA experiments such as in *Zuber, et. al, 2011*[^Zuber2011]
 
-In this experiment a library of hairpins is introduced into a population of cells and depending on which hairpin gets encorporated that particular cell my grow or die. By sequencing using primers specific to the hairpin contructs you can determine which shRNA lead to proliferation and survival or arrest. 
+In this experiment a library of hairpins is introduced into a population of cells and depending on which hairpin gets incorporated that particular cell my grow or die. By sequencing using primers specific to the hairpin constructs you can determine which shRNA lead to proliferation and survival or arrest. 
 
 ## Sequence design
 
@@ -12,13 +12,13 @@ A typical shRNA construct will look as follows;
 
 ![](../images/shRNAconstruct.png "shRNAconstruct")
 
-For this excercise we will focus on a core region that contains the following sequence elements:
+For this exercise we will focus on a core region that contains the following sequence elements:
 
 ![](../images/shRNAseqLayout.png "shRNAseqLayout")
 
 The shRNA sequence goes from position 1 to 22. There is an index sequence that for this example is fixed and is from position 23 to 28 and then an adapter sequence. 
 
-Given a FASTQ file of sequences we want to count the abundance of the shRNA sequences in it. shRNA's with higher abudances may indicate that the gene targeted by them potentially responsible for limited cell proliferation (i.e., repression them turns growth on)
+Given a FASTQ file of sequences we want to count the abundance of the shRNA sequences in it. shRNA's with higher abundances may indicate that the gene targeted by them is potentially responsible for limiting cell proliferation (i.e., repressing it activates growth)
 
 
 ## Description of Pipeline
@@ -29,15 +29,15 @@ The basic outline of the pipeline is as follows
 
 * Convert from *FASTQ to FASTA*
 	
-* *Clip* Index Sequence, discard sequnces without an adapter (quality control) in them or shorter than the length of the shRNA piece.
+* *Clip* Index Sequence, discard sequences without an adapter (quality control) in them or shorter than the length of the shRNA piece.
 
-* *Collapse* multiple occurances of the same sequence and get the counts
+* *Collapse* multiple occurrences of the same sequence and get the counts
 
 * Re-*format* the FASTQ file into a tabular format
 
 * Join/annotate shRNA sequences.
 
-The first 5 steps of this pipeline can be done either with programs from the FASTX tool kit or with a custom script/program. The last step will require some programming, but should be doable in R, python or perl and should be simple in any programming langage with decent I/O and string capapilities. 
+The first 5 steps of this pipeline can be done either with programs from the FASTX tool kit or with a custom script/program. The last step will require some programming, but should be doable in R, python or perl and should be simple in any programming langage with decent I/O and string capabilities. 
 
 The input for this pipeline is at:
 
@@ -54,7 +54,7 @@ and the output you should get is:
 where `$ROOT` is either you `$HOME` directory or wherever you installed the Intro2NextGen package.
 
 
-You can find a manual for all the FASTX commands either oneline at:
+You can find a manual for all the FASTX commands either online at:
 
 * http://hannonlab.cshl.edu/fastx_toolkit/commandline.html
 
@@ -80,13 +80,13 @@ Then browse the commands available and there features by either `ls`-ing that di
 
 or use the manual pages linked above and try to build the pipeline. Although you can get something built in less than steps you should use **5** different commands from the toolkit. 
 
-If you run into a snag then just move to the next section. If you do complete the pipeine skip to __Final Steps__.
+If you run into a snag then just move to the next section. If you do complete the pipeline skip to __Final Steps__.
 
 ## Pipeline walkthrough
 
 ### Preamble
 
-Although it is usually a really bad idea to do pipelines as command line one liners for pedagoical reasons we will do that here. The input file is small enough that repated re-running should not be an issue. However if you feel more comfortable encapsulating the commands in a script then please do so. But make sure if you are going to go the one liner route you understand how to use the command history; in particular how to repeat previous commands. Make sure either CTRL-P or uparrow work as expected.
+Although it is usually a really bad idea to do pipelines as command line one liners; for pedagogical reasons we will do exactly that here. The input file is small enough that repeated re-running should not be an issue. However if you feel more comfortable encapsulating the commands in a script then please do so. Make sure if you are going to go the one liner route you understand how to use the command history; in particular how to repeat previous commands. Make sure either CTRL-P or up-arrow work as expected.
 
 First make sure the FASTX toolkit is on your path. You can do this typing:
 ```
@@ -157,7 +157,7 @@ if you get an error (No such file or directory) ask; there should be a live upda
 	find $HOME | fgrep shRNA_Experiment1.fastq.gz
 ```
 
-Once you are sure you have the file code the first step of the pipeline. Note; that files ends with a `.gz` extension. That means the file is compressed (to save space). DNA sequence data is highly redudant and actually compresses quite well and even compressed the files are usually huge so almost always you will be dealing with compressed files. 
+Once you are sure you have the file code the first step of the pipeline. Note; that files ends with a `.gz` extension. That means the file is compressed (to save space). DNA sequence data is highly redundant and actually compresses quite well. However even compressed the files are usually huge so almost always you will be dealing with compressed files. 
 
 You could uncompress it but for this exercise since we will be using pipes extensively let's just take a look at the top of the file with
 ```
@@ -216,7 +216,7 @@ ACCATAGCATATATCAATGTAATACATCTGTGGCTTCACTACCAGATCG
 
 N.B. the second sequence was trimmed. 
 
-What do the options means? You should look at the help screen and convinence yourself they are what we want. But why `-v`; what is verbose? It just prints some statistics how many sequences were discard becasue they were two short after trimming. That info goes to stardard error if your are worried about it messing up the pipeline. If you want to see it do:
+What do the options means? You should look at the help screen and convince yourself they are what we want. But why `-v`; what is verbose? It just prints some statistics how many sequences were discard because they were two short after trimming. That info goes to standard error if your are worried about it messing up the pipeline. If you want to see it do:
 ```
 	zcat $INPUT | fastq_quality_trimmer -t 30 -l 28 -Q33 -v >/dev/null
 ```
@@ -301,7 +301,7 @@ You can use the following dataset which is miRNA sequenced to 50bp so every sequ
 ## Code
 
 ```bash
-gzcat shRNA_Experiment1.fastq.gz \
+zcat shRNA_Experiment1.fastq.gz \
 	| $FASTX/fastq_quality_trimmer -t 30 -l 28 -Q33 -v \
 	| $FASTX/fastq_to_fasta -Q33 -v \
 	| $FASTX/fastx_clipper -a TACATC -c -l 22 \
