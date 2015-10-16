@@ -46,5 +46,5 @@ which is conceptually a pretty simple problem.
 
 	- Standard solution when searching in a large space; build index
 	
-	- For searching strings the index is a suffix tree
-	![](images/495px-Suffix_tree_BANANA.svg.png "Suffix Tree (wiki)")
+	- For searching strings the index is usually suffix tree
+	![Wiki](images/495px-Suffix_tree_BANANA.svg.png "Suffix Tree (wiki)")
