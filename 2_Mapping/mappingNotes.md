@@ -33,8 +33,8 @@ which is conceptually a pretty simple problem.
 
 - But there are two wrinkles (complications):
 
-	- Size (N): len(G) is enormouse (3,000,000+ for human)
-	and while len(s) is usually tiny (50--200) we have $10^8$
+	- Size (N): len(G)==N is enormouse (3,000,000+ for human)
+	and while len(s)==m is usually tiny (50--200) we have $10^8$
 	to $10^9$
 	
 	- Imperfect matches: we want to find the closest match
@@ -55,4 +55,7 @@ which is conceptually a pretty simple problem.
 	
 	- Pros: 
 	
-		- search for exact match is $\mathcal{O}(\mathrm{len}(s))$
+		- search for exact match is $O(m)$
+		- search for regular expression is expect sublinear in $N$
+		
+[//]: # ($\mathcal{O}(\mathrm{len}(s))$)
