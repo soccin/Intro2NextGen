@@ -42,9 +42,17 @@ which is conceptually a pretty simple problem.
 		- actually want both best and sub-optimal
 		- sometimes just one, a few, all
 		
-- Dealing with size issue
+- Dealing with size issue (and mismatches partially)
 
 	- Standard solution when searching in a large space; build index
 	
-	- For searching strings the index is usually suffix tree
+	- For searching strings the index is usually a suffix tree
+	
+	> In computer science, a suffix tree (also called PAT tree or, in an earlier form, 	position tree) is a compressed trie containing all the suffixes of the given text as their 	keys and positions in the text as their values. Suffix trees allow particularly fast 	implementations of many important string operations.
+	[Suffix tree - Wikipedia](https://en.wikipedia.org/wiki/Suffix_tree)
+	
 	![Wiki](images/495px-Suffix_tree_BANANA.svg.png "Suffix Tree (wiki)")
+	
+	- Pros: 
+	
+		- search for exact match is $\mathcal{O}(\mathrm{len}(s))$
