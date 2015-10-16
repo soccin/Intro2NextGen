@@ -56,6 +56,13 @@ which is conceptually a pretty simple problem.
 	- Pros: 
 	
 		- search for exact match is $O(m)$
+
 		- search for regular expression is expect sublinear in $N$
+		
+	- Cons:
+	
+		- Size: Index way larger than $N$
+		
+			- Use of BWT transform drastically helps reduce the size issue
 		
 [//]: # ($\mathcal{O}(\mathrm{len}(s))$)
