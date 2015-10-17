@@ -35,12 +35,13 @@ which is conceptually a pretty simple problem.
 
 	- Size (N): len(G)==N is enormouse (3,000,000+ for human)
 	and while len(s)==m is usually tiny (50--200) we have $10^8$
-	to $10^9$
+	to $10^9$ of them
 	
-	- Imperfect matches: we want to find the closest match
+	- Imperfect and/or multiple matches: we want to find the best closest match
 	
 		- actually want both best and sub-optimal
 		- sometimes just one, a few, all
+		- most algorithm trade of speed for ability to find all
 		
 - Dealing with size issue (and mismatches partially)
 
