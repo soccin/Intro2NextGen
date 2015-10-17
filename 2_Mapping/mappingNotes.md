@@ -66,3 +66,92 @@ which is conceptually a pretty simple problem.
 			- Use of BWT transform drastically helps reduce the size issue
 		
 [//]: # ($\mathcal{O}(\mathrm{len}(s))$)
+
+- Imperfect partial matches
+
+	- Long history of work on this; the original sequence (proteins between species) searches look at highly divergent sequences.
+	
+	- Read Durbin
+	
+	- Pairwise alignments:
+	
+		- Dynamic Programming
+	
+		- Global: Needleman-Wunsch
+		
+		- Local: Smith-Waterman
+		
+	- BLAST
+	
+	- BLAT
+	
+	- Ultra-fast methods
+
+		- BWA
+
+		- Bowtie
+
+		- SHRiMP
+		
+	- Spliced aligners
+	
+		- Get comp paper (Engstrom et al)
+		
+		- TopHat
+		
+		- STAR
+		
+			- Two pass from Engstrom
+		
+	- Discussion of speed vs quality. Fast alone is not a great thing
+	
+	- Mappless aligners
+	
+		- k-mer
+		
+		- Sailfish
+		
+		- Kallisto
+		
+- Genomes
+
+	- Builds / version
+	
+		- Chromosome naming annoyance
+		
+			- Disagreements 
+			
+				- (chr1 vs 1)
+				- chrM vs chrMT in human (not just different name)
+				
+			- Who thought this was a good idea (chrI, chrII)
+			
+	- Full builds (random / unassembled)
+		
+		- USE THEM!!
+			
+	- Decoy (for variant)
+		
+	- Hybrid genomes (xenografts)
+	
+		- With 64bit indexs can build 4Gb+ genomes
+		
+	- Sources
+	
+		- UCSC (old favorite; lots of annotation easily available)
+		
+		- NCBI/ENSEMBLE (less easy to use; but seems be becoming more standard)
+		
+		- Have agreed on genome names; not chromosome names
+	
+		- iGenome (if they have your org probably the best place)
+		
+	- Indexes
+		
+		- specific to aligner and usually version specific
+		
+		- Spliced aligners also have Gene Model Dependence
+		
+			- Star has read length also
+			
+	
