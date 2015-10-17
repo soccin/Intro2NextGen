@@ -1,3 +1,4 @@
+# 2015_10_16 9:33
 # Datasets for Mapping Exercises
 
 ## RNAseq from SEQC
@@ -88,11 +89,34 @@ which is conceptually a pretty simple problem.
 	
 	- Ultra-fast methods
 
-		- BWA
+		- MAQ
 
+			- Definition of MAPQ
+
+		- BWA (successor of MAQ)
+		
+			- Work horse in variant detection community
+		
 		- Bowtie
+		
+			- Many algorithms have Bowtie as their mapping kernel (TopHat; Express)
 
-		- SHRiMP
+			- more tweakable (or more easily so) then BWA
+			
+			- MAPQ score do not follow "expected" form/formula
+
+		- SHRiMP (no longer developed but old favorite)
+		
+			- Very tweakable
+			
+			- Native COLOR space support (ie reads in FASTA genome; no double encodeing non-sense)
+			
+			- Actually has a useful non-standard output mode (alignment); 
+			more easily parsed cigar string
+			
+			- work well for intermediate length reads
+			
+			- very, very slow compared to BWA/BOWTIE
 		
 	- Spliced aligners
 	
@@ -113,6 +137,21 @@ which is conceptually a pretty simple problem.
 		- Sailfish
 		
 		- Kallisto
+		
+	- others
+	
+		- long read (Roche 454)
+	
+			- bwa bwasa
+			
+			- lastz (http://www.bx.psu.edu/~rsharris/lastz/)
+		
+		- very long: genome to genome
+		
+			- mummer (http://mummer.sourceforge.net)
+			
+			- lastz
+	
 		
 - Genomes
 
