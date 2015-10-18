@@ -45,12 +45,6 @@ The input for this pipeline is at:
 	$ROOT/Intro2NextGen/1_Sequencing/data/shRNA_Experiment1.fastq.gz
 ```
 
-and the output you should get is:
-
-```
-	$ROOT/Intro2NextGen/1_Sequencing/data/exercise_1_1.out  
-```
-
 where `$ROOT` is either you `$HOME` directory or wherever you installed the Intro2NextGen package.
 
 
@@ -278,6 +272,32 @@ CACTAAGTAAATGTTTAATCAA
 TCATTTCCATTTTACAAGATAA
 ```
 
+### Last step: no pipes alternative
+
+While this pipeline will be done with pipes as I said it can also be done with saving intermediate files. Here are two versions of the previous piece but this time saving intermediate results to a file. 
+
+#### version 1: use file redirection
+
+With file redirection
+```bash
+	zcat $INPUT > step0.out
+	fastq_quality_trimmer -t 30 -l 28 -Q33 -v <step0.out >step1.out
+	fastq_to_fasta -Q33 -v <step1.out >step2.out
+	fastx_clipper -a TACATC -c -l 22 <step2.out >step3.out
+	head step3.out
+```
+
+The fastx tools also permit another option; use their command line input/output options
+```
+	zcat $INPUT > step0.out
+	fastq_quality_trimmer -t 30 -l 28 -Q33 -v -i step0.out -o step1.out
+	fastq_to_fasta -Q33 -v -i step1.out -o step2.out
+	fastx_clipper -a TACATC -c -l 22 -i step2.out -o step3.out
+	head step3.out
+```
+
+You may ask why do `zcat` and write a separate file instead of `gunzip` and decompress the `$INPUT`. This is not a hard rule; but I have a strong preference not to modify original/raw input files in anyway. In fact at MSKCC the sequence archive were all sequence data is stored is READ-ONLY; to prevent anyone from accidentally or intentially modify any of the *raw* data. Using `gunzip` would modify the original input file (which where I work is not even possible).
+
 ## Collapse and re-format
 
 The steps up to this point are actually fairly common in many sequence processing pipeline (except for the conversion from FASTQ to FASTA) and at this point we have trimmed/clipped sequences which in most situation we would now mapped to the appropriate genome. However in this case mapping is unnecessary. The sequences are from a designed screen so we know what they are (and what genes they target) already based on just the sequence. What we want to know is from the starting pool for roughly equally proportioned hairpins which ones were enriched and which were depleted. Simply we want to count them and there is a tool to do that: `fastx_collapser`. Although not obvious from its name `fastx_collapser` will collapse multiple copies of the same sequence and will also give you the counts of how many times  that copied was in the file. 
@@ -354,15 +374,36 @@ However to tie things together and to complete this get the table and gene names
 
 ## Extra credit
 
-* find and install an alternative adapter clipper
+The FASTX toolkit is very useful but it is very old and not longer actively maintained. In particular the clipper (`fastx_clipper`) has some very odd behavior and also does not work with PairEnd data; it also is not deterministic (ie you get different answer). From the author himself:
 
-* write your own adapter clipper
+> The fastx-clipper was designed to work with short reads (e.g 36nt or 50nt), and be very-sensitive (and somewhat less specific) - it will not perform well with longer reads. I'd recommend trying other clipping programs (e.g. "cutadapt")
 
-You can use the following dataset which is miRNA sequenced to 50bp so every sequence has the adapter in it. 
+You definitely want to use a more modern adapter. Some alternatives are:
 
-* or if you just want to practice more with FASTX use it to clip
+* cutadapt
 
-*GET MIRNA DATASET*
+* TrimGalore (wrapper around cutadapt with defaults)
+
+So if there is time try the following exercise
+
+* Rewrite the above pipeline to not use `fastx_clipper`. Ask if you need a hint but think about it first.
+
+* Find and install an alternative adapter clipper
+
+You can use the following dataset which is miRNA sequenced to 50bp so every sequence has the adapter in it. This is the Illumina SmallRNA adapter sequence. 
+
+> \>smallRNA 3' Adapter
+> tggaattctcgggtgccaaggaactccagtcaca
+
+and you can find the miRNA data at:
+```
+	$ROOT/Intro2NextGen/1_Sequencing/data/miRNA_Dataset.fastq.gz
+```
+
+
+* Or if you just want to practice more with FASTX use it to clip this data set which is what fasts was optimized for. 
+
+* Use the pipeline above (or your own program) to count miRNA sequences; *N.B.* miRNA are not all the same length so the pipeline I did above will work with miRNA but if you did a short cut pipeline that just extracted the shRNA sequence directly instead of clipping it will not work for miRNA. 
 
 ## References
 
