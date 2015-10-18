@@ -356,12 +356,13 @@ Not the most greatest format but a least is a much more easily parseable table.
 ## Final Steps
 
 While the sequences identify the shRNA uniquely a much nicer table for humans would look like this:
-```
-1222	CCTAGTGAATATTTATTATGAA	Rpa1_17
-1011	CACTAAGTAAATGTTTAATCAA	Mplkip_2466
-976		GAAGGATAAATTAGTAACTTAA	Fancg_37
-911		TACATACATAAATCATTCTTTA	Rnaseh2a_928
-```
+
+Counts|Sequence|GeneTarget
+-----|--------|----------
+1222|	CCTAGTGAATATTTATTATGAA|	Rpa1_17
+1011|	CACTAAGTAAATGTTTAATCAA|	Mplkip_2466
+976	|	GAAGGATAAATTAGTAACTTAA|	Fancg_37
+911	|	TACATACATAAATCATTCTTTA|	Rnaseh2a_928
 
 Where the identity of the sequences is stored in the file `shRNA_Library.fasta` which is in the same directory as the input FASTQ file. 
 

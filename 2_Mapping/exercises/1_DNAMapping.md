@@ -98,6 +98,80 @@ Make sure you can find this file. In particular make sure
 To generate these datasets I used the program `wgsim` from the author of BWA. It is not installed but is prehaps the easiest program of all the ones you are looking at to install. At the end of this exercise I have the location for it for those you want to play with generating their own data. 
 
 
+### Building indexes
+
+Normally the first step when using a mapper for the first time with a new genome is to build the genome index. This is a time consuming process but it greatly speeds up the subsequent mapping runs. 
+
+To save time I have pre-build the indexes for three aligners on the test hg19 genome. However if you are comfortable with UNIX and the command line and would like to get some experience with index building please do so. If you re-build the indexes make sure you keep track of where they are. 
+
+
+### Data set 1: default wgsim generated
+
+The first test is a single end run and consists of one file:
+```
+	hg19Test2_DEF_1_SE.fastq.gz
+```
+
+This one is a single end set so just one read file. Map it with BWA, Bowtie and even though it is DNA data try and map it with STAR. 
+
+For BWA use BWA MEM first. If you have time you can experiment with the other modes of BWA. For Bowtie and STAR (and BWA-MEM) us default mapping options.
+
+The main point of this exercise is to learn how to use the mappers; so I am not going to give explicit command lines for each. Look at the help screens (remember STAR does not have one) look at the manuals. You can go online for BWA and Bowtie; STAR's manual is a PDF so I put it in the repository at:
+```
+	$ROOT/Compgen2015/Course/Intro2NextGen/man/STAR
+```
+
+Note, all the mappers output uncompressed plain text SAM files so you can look at them with `more` or `less` or maybe open them with an editor. In fact if you take the first 10-20 lines (with head) you can maybe even open them in excel or some other spreadsheet program. 
+
+Some things to do. 
+
+- Record the time it takes to run each. 
+
+	- To time a command you can use the unix `time` function. If you do
+	```
+	time COMMAND
+	```
+	
+	That will run the command and print out the time it took. 
+	
+	Timing benchmarks are notoriously hard to get right. We do not want to get bogged down here on that but I suggests running each program twice and taking the smaller of the two numbers. But if you have time and ideas try other testing strategies
+
+	- Do you understand why STAR is not used for everything
+	
+- Check the % of mapped reads. Think about how to do this; but do not spend too much time. There is a quick script in:
+  ```bash
+  $ROOT/Compgen2015/Course/Intro2NextGen/2_Mapping/code/calcPercentMapped.sh
+  ```
+  
+  which will give the %-mapped and unmapped. In the next module we will use a much more powerfull program to compute mapping statistics. 
+
+- Look at the different SAM files in details. In particular look at the TAGS, especially the custom tags for each. 
+	  - BWA: XA, XS
+	  - Bowtie: XG, XM, XN, XO, XS
+  You should learn what those they mean and while there is no point memorizing them you should be able to know how to find the meanings of them when needed
+  
+
+### Data set 2: paired end data set
+
+The second set is paired end data. There are two files this time
+```
+hg19Test2_DEF_2_R1.fastq.gz
+hg19Test2_DEF_2_R2.fastq.gz
+```
+
+This follows the Illumina convention: R1 is the 'left' read, R2 the 'right' (in sequencing space not necessary genome space)
+
+Map this data; all the mappers have modes for paired end mapping. You can drop STAR now unless you are no convinced it is a good idea for DNA sequencing.
+
+Do the same things you did for the single end case:
+
+* Time them
+
+* Measure % mapped/unmapped
+
+* Look into the files
+  
+Then if there is time; play with the various options in the mappers and see how they effect things. Maybe try BWA ALN (which is not really used anymore but had some nice properties). If you are really adventurous the extra credit is to find other mappers to download and try them; SHRiMP is a personal favorite but it is no longer maintained. But if you need to deal with color data from the SOLiD sequencer is is one of the easiest to use. 
 
 ## wgsim
 
