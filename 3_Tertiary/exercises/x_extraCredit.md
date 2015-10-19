@@ -1,6 +1,6 @@
-# Picard Exercises:
+# Some additional UNIX exercises
 
-## Some additional UNIX exercises
+## Create a convience script to run PICARD
 
 Skip if you are new to UNIX or programming
 
