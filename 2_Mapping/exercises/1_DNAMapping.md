@@ -109,7 +109,7 @@ To save time I have pre-build the indexes for three aligners on the test hg19 ge
 
 The first test is a single end run and consists of one file:
 ```
-	hg19Test2_DEF_1_SE.fastq.gz
+	$ROOT/Intro2NextGen/2_Mapping/data/hg19Test2_DEF_1_SE.fastq.gz
 ```
 
 This one is a single end set so just one read file. Map it with BWA, Bowtie and even though it is DNA data try and map it with STAR. 
@@ -173,13 +173,21 @@ Do the same things you did for the single end case:
   
 Then if there is time; play with the various options in the mappers and see how they effect things. Maybe try BWA ALN (which is not really used anymore but had some nice properties). If you are really adventurous the extra credit is to find other mappers to download and try them; SHRiMP is a personal favorite but it is no longer maintained. But if you need to deal with color data from the SOLiD sequencer is is one of the easiest to use. 
 
-## wgsim
+### Data set 3: real ChIP seq data
 
-You can find a copy of wgsim here:
+This data was too big to put in the course folder on GitHub so it is in a separate folder on the share drive. Copy to you local computer and make sure you keep track of where you put it. Call this path `$DATA`, you can then find the ChIPseq data at:
+```bash
+	$DATA/Intro2NextGenMaterials/data/2_Mapping
 ```
-https://github.com/lh3/wgsim/archive/master.zip
+
+and the files are:
+```bash
+	sample_DNA_Real_ChIP_Med_SE.fastq.gz
+	sample_DNA_Real_Input_Med_SE.fastq.gz
 ```
 
-Read the README and follow the Compliation instructions. Then read the rest of the README and the help screen for the program. Is is pretty simple but fairly quick.
+Map this data with the mapper of your choice. We will use it in the next two labs.
+Note, it is single end data with two (2) different samples.
 
+These datasets are large so they might take awhile to map. I suggest running in the background and moving on to the next step mapping RNAseq data
 

@@ -1,16 +1,21 @@
-# Star 2 pass mapper
+# Extra Credit Exercises
 
-* See if you can see a difference in mapping to an index
+## SHRiMP Mapping Program
 
-    * With NO junctions
-
-    * Default junctions
-
-    * 2 Pass: 1,Default then 2,Default+Found
-
-# SHRiMP Mapping Program
-
-* Find, Install and use the SHRiMP mapping program to map any of the datasets previously used or your own data
+* Find, install and use the SHRiMP mapping program to map any of the datasets previously used or your own data
 
 * CAUTION: SHRiMP is much, much slower then the previous ones. 
+
+## wgsim
+
+Generate your own test data and test how different settings affect mapping
+
+You can find a copy of wgsim here:
+```
+https://github.com/lh3/wgsim/archive/master.zip
+```
+
+Read the README and follow the Compliation instructions. Then read the rest of the README and the help screen for the program. Is is pretty simple but fairly quick.
+
+
 

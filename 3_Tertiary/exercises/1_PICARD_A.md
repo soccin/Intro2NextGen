@@ -83,4 +83,102 @@ So get the SAM files we made in the previous exercise ready for use in IGV with 
 
 where you need to pick inputFile and outputFile names accordingly. Use this oppurtunity to give your files meaningful names. 
 
+If you run this you will likely get the following error. 
+```
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+```
+
+java has be default a very small amount of memory allocated and even the tiny SAM files we are looking at need more. The virtual machines have 8Gb of RAM. If you are using your own machine check out much it has. 2Gb should be enough for the small files we are using. If you are an advanced UNIX person you might want to try searching for google for the answer before looking below
+
+
+To tell JAVA to use 2Gb you do:
+```bash
+	java -Xmx2g -jar $PICARDJAR SortSam \
+		CREATE_INDEX=true \
+		SO=coordinate \
+		I=inputFile.sam \
+		O=outputFile.bam 
+```
+
+
+# Picard for stats
+
+Another extremely use part of the PICARD tool kits are statistics. They have large number of statistics modules or what they call metrics you can compute on BAM files. A partial listing (taken from the help screen):
+
+>	CollectAlignmentSummaryMetrics
+>	Produces a file containing summary alignment metrics from a SAM or BAM.
+    
+>	CollectInsertSizeMetrics                     
+>	Writes insert size distribution metrics for a SAM or BAM file
+    
+>	CollectMultipleMetrics                       
+>	A "meta-metrics" calculating program that produces multiple metrics for the provided SAM/BAM
+    
+>	CollectRnaSeqMetrics                         
+>	Produces RNA alignment metrics for a SAM or BAM file    
+
+I suggest at least running the `CollectAlignmentSummaryMetrics` on the sorted BAM files from the previous section and perhaps the `CollectRnaSeqMetrics` on the RNA mapped BAMs.
+
+# Samtools view
+
+As I said you should try to use PICARD when possible for manipulating SAM/BAM files and also for stats. But there is one samtools command that is incredible useful. It is `samtools view`. It can be use to convert SAMs to BAMs and visa verse. But its perhaps most useful features are 
+
+* listing (`cat`-ing) BAM files. If you do:
+```
+	samtools view bamfile.bam
+```
+
+it will uncompress and list the contents of the BAM file to the terminal. This can be usefull in an enourmous number of ways and there are a number of options. Do
+```
+	samtools view
+```
+
+by itself to see them. One of things very useful features of samtools view is it can extract reads from a sepecific range from an index BAM. 
+```bash
+	samtools view bamfile.bam chr22:12345000-12346000
+```
+
+will extract the reads that overlap that 1,000bp region. Play with it on the BAM files you have created. 
+
+* indexing large FASTA files and extracting subsequences
+
+You can use `samtools faidx` to both index and then once index extract subsequences from a large FASTA file. For example if you have already run
+```bash
+	samtools faidx genome.fa
+```
+
+you will know this is done if there is a file called `genome.fa.fai`, then you can get a piece of the genome with:
+```bash
+	samtools faidx $GENOMEPATH/genome.fa chr22:23456000-23456100
+```
+
+which outputs:
+
+```bash
+>chr22:23456000-23456100
+CTGCCCACCAGGCCTGTCACACAGAGCTCTGGGAAATGGAGATGGGCAGTCAGTGCCAGC
+CAAGGGCAGGCACCCGCTACCGATGGAGGCATGTTGGTCAC
+```
+
+# BEDTOOLS
+
+I did not have time to cover bedtools but you absolutely should familiarize yourself with it. It can process BAM's, BED's, GFF, and VCF files. It basically is a genome region processor where the regions can be specific in one of those formats. It does what it calls _Genome arithmetic_ including:
+
+* intersect     == Find overlapping intervals in various ways.
+* window        == Find overlapping intervals within a window around an interval.
+* closest       == Find the closest, potentially non-overlapping interval.
+* coverage      == Compute the coverage over defined intervals.
+* map           == Apply a function to a column for each overlapping interval.
+* genomecov     == Compute the coverage over an entire genome.
+* merge         == Combine overlapping/nearby intervals into a single interval.
+* cluster       == Cluster (but don't merge) overlapping/nearby intervals.
+
+and tons of other stuff. If it is installed just type `bedtools` to see a full list of features and for sure checkout the man page at: (http://bedtools.readthedocs.org/en/latest/)
+
+One could do a 4 hour course on just BEDTOOLS; however the `R` GenomeRange packages is also similarly featured so if you are more comfortable with `R` that may be easier to use. 
+
+
+
+
+
 
